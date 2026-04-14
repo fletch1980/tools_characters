@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Bible Character Study — Bible Study Hub</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:#0a0a1a;font-family:system-ui,sans-serif;min-height:100vh;padding:20px 16px 60px;color:white;}
+.back-btn{display:inline-flex;align-items:center;gap:6px;color:#a78bfa;font-size:13px;text-decoration:none;margin-bottom:20px;}
+.back-btn:hover{color:white;}
+.header{text-align:center;margin-bottom:20px;}
+.header .icon{font-size:40px;margin-bottom:8px;}
+.header h1{font-size:22px;font-weight:900;}
+.header p{font-size:13px;color:#9ca3af;margin-top:4px;}
+.search-wrap{position:relative;margin-bottom:14px;}
+.search-wrap input{width:100%;background:#12122a;border:1px solid #1e1e40;border-radius:12px;padding:12px 16px 12px 40px;color:white;font-size:14px;outline:none;}
+.search-wrap input::placeholder{color:#4b5563;}
+.search-wrap input:focus{border-color:#6366f1;}
+.search-icon{position:absolute;left:13px;top:50%;transform:translateY(-50%);font-size:15px;pointer-events:none;}
+.filter-row{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;margin-bottom:20px;}
+.filter-btn{padding:7px 14px;border-radius:20px;font-size:12px;font-weight:700;border:1.5px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.05);color:#9ca3af;cursor:pointer;white-space:nowrap;transition:all 0.2s;flex-shrink:0;}
+.filter-btn.active{border-color:#38bdf8;color:#38bdf8;background:rgba(56,189,248,0.12);}
+.char-grid{display:flex;flex-direction:column;gap:10px;}
+.char-card{background:#12122a;border:1px solid #1e1e40;border-radius:14px;overflow:hidden;cursor:pointer;transition:border-color 0.15s;}
+.char-card:hover{border-color:#38bdf855;}
+.char-header{display:flex;align-items:center;gap:14px;padding:14px 16px;}
+.char-avatar{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
+.char-info{flex:1;}
+.char-name{font-size:16px;font-weight:800;color:white;}
+.char-meta{font-size:11px;color:#6b7280;margin-top:2px;}
+.char-tag{display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;margin-top:4px;}
+.char-arrow{color:rgba(255,255,255,0.25);font-size:13px;flex-shrink:0;}
+.char-body{display:none;border-top:1px solid #1e1e40;padding:16px;}
+.char-body.open{display:block;}
+.section-label{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#38bdf8;margin-bottom:8px;}
+.section-text{font-size:13px;color:rgba(255,255,255,0.85);line-height:1.75;margin-bottom:16px;}
+.key-verses{background:#0d0d1f;border-radius:10px;padding:12px 14px;margin-bottom:16px;}
+.verse-item{display:flex;gap:10px;margin-bottom:10px;}
+.verse-item:last-child{margin-bottom:0;}
+.verse-ref{font-size:11px;font-weight:700;color:#38bdf8;white-space:nowrap;min-width:90px;}
+.verse-txt{font-size:12px;color:#cbd5e1;line-height:1.6;font-style:italic;}
+.lessons-list{display:flex;flex-direction:column;gap:6px;margin-bottom:16px;}
+.lesson-item{background:#0c4a6e22;border:1px solid #38bdf822;border-radius:8px;padding:10px 12px;font-size:12px;color:#e0f2fe;line-height:1.6;}
+.lesson-item::before{content:'→ ';}
+.legacy-box{background:rgba(56,189,248,0.08);border:1px solid rgba(56,189,248,0.2);border-radius:10px;padding:12px 14px;}
+.empty-state{text-align:center;color:#4b5563;padding:40px 0;font-size:13px;}
+.gender-badge{display:inline-block;padding:2px 6px;border-radius:6px;font-size:9px;font-weight:700;margin-left:6px;vertical-align:middle;}
+</style>
+</head>
+<body>
+
+<a class="back-btn" href="../index.html">← Bible Study Hub</a>
+<div class="header">
+  <div class="icon">👤</div>
+  <h1>Bible Character Study</h1>
+  <p>Major characters · Their story, lessons &amp; legacy</p>
+</div>
+
+<div class="search-wrap">
+  <span class="search-icon">🔍</span>
+  <input type="text" id="searchInput" placeholder="Search characters…" oninput="renderChars()"/>
+</div>
+
+<div class="filter-row" id="filterRow"></div>
+<div class="char-grid" id="charGrid"></div>
+
+<script>
+var CHARS = [
+  // CREATION
+  {id:1, name:"Adam", era:"Creation", gender:"M", icon:"🌿", iconBg:"#052e16", tag:"First Man", tagColor:"#10b981", tagBg:"#052e16",
+   story:"Adam is formed from the dust of the ground by God's own hands — the most personal act of creation. He alone receives the breath of God directly. He walks with God in the cool of the evening, names every living creature, and is given stewardship over all creation. His one boundary is the tree of the knowledge of good and evil — one tree out of thousands. He fails. Not in weakness, but in a moment of silent, deliberate choice: Eve is deceived; Adam simply takes and eats without protest. The consequences cascade: shame, hiding, blame-shifting, expulsion from Eden, and death entering the world. Yet even in judgment God acts with grace — covering their nakedness with animal skins, the first blood shed to cover human shame.",
+   verses:[
+     {ref:"Genesis 2:7", txt:"The LORD God formed a man from the dust of the ground and breathed into his nostrils the breath of life, and the man became a living being."},
+     {ref:"Genesis 3:6", txt:"She also gave some to her husband, who was with her, and he ate it."},
+     {ref:"Romans 5:12", txt:"Sin entered the world through one man, and death through sin, and in this way death came to all people."},
+     {ref:"1 Cor 15:45", txt:"The first man Adam became a living being; the last Adam, a life-giving spirit."},
+   ],
+   lessons:["One act of quiet disobedience changed everything — the weight of small, unspoken choices is never actually small.","Adam hid from God after sinning. God came looking anyway. Restoration always begins with God pursuing us, not us cleaning up first.","Paul calls Jesus the 'last Adam' who undoes everything the first Adam broke. Every failure in Scripture points to a redeemer.","Adam's blame-shifting ('the woman you put here') is the first defense mechanism in human history — and still our most common one."],
+   legacy:"Adam's story is humanity's story. His failure is ours; his need for a rescuer is ours. The whole Bible is the answer to Genesis 3. Paul structures his entire theology of salvation around the Adam–Christ parallel in Romans 5 and 1 Corinthians 15."},
+
+  {id:2, name:"Eve", era:"Creation", gender:"F", icon:"🌺", iconBg:"#052e16", tag:"First Woman", tagColor:"#10b981", tagBg:"#052e16",
+   story:"Eve is created not from dust but from Adam's side — bone of his bone, flesh of his flesh. Her creation is the culmination of God's 'very good' declaration. She is not an afterthought; she is the answer to the only 'not good' in all of creation: 'It is not good for man to be alone.' She walks with God, bears the weight of the serpent's deception, and becomes the first to reach for what was forbidden. After the Fall, her punishment is profound — pain in childbirth and a broken dynamic with her husband. Yet God's promise to her is the first gospel: her offspring will crush the serpent. She names her firstborn son Cain, saying 'I have brought forth a man with the help of the LORD' — still trusting God even in exile.",
+   verses:[
+     {ref:"Genesis 2:23", txt:"This is now bone of my bones and flesh of my flesh; she shall be called woman, for she was taken out of man."},
+     {ref:"Genesis 3:15", txt:"I will put enmity between you and the woman, and between your offspring and hers; he will crush your head."},
+     {ref:"Genesis 4:1", txt:"With the help of the LORD I have brought forth a man."},
+     {ref:"2 Cor 11:3", txt:"I am afraid that just as Eve was deceived by the serpent's cunning, your minds may somehow be led astray from your sincere devotion to Christ."},
+   ],
+   lessons:["Deception rarely looks like deception — it looks like wisdom, opportunity, and good reasoning. Eve's temptation was subtle, not crude.","The first promise of salvation (Genesis 3:15) is spoken directly to Eve. She is the first to receive the proto-gospel.","Eve still trusted God enough to credit Him at Cain's birth. Brokenness does not have to produce bitterness.","Her story is a warning about entertaining conversations that subtly reframe God's word ('Did God really say?')."],
+   legacy:"Eve is the mother of all the living — and the first recipient of messianic promise. The NT connects her deception to a warning about spiritual seduction (2 Corinthians 11:3) and Paul references her in discussions of order in the church. Mary as the 'new Eve' whose obedience reverses Eve's disobedience is a pairing found throughout early Christian theology."},
+
+  {id:3, name:"Noah", era:"Creation", gender:"M", icon:"🕊️", iconBg:"#0c4a6e", tag:"Man of Faith", tagColor:"#38bdf8", tagBg:"#0c2a3e",
+   story:"In a world so morally corrupt that God grieves having made it, one man stands out: 'Noah was a righteous man, blameless among the people of his time, and he walked faithfully with God.' God warns him of a coming flood and commands him to build a massive ark — in a world that had likely never seen rain. For decades Noah builds and preaches with no visible results. His entire generation ignores him. Then the rain comes. For 40 days the earth is submerged. After months afloat, a dove brings an olive branch and they emerge. God makes a covenant — not just with Noah but with every living creature — and hangs a rainbow as its eternal sign.",
+   verses:[
+     {ref:"Genesis 6:9", txt:"Noah was a righteous man, blameless among the people of his time, and he walked faithfully with God."},
+     {ref:"Genesis 6:22", txt:"Noah did everything just as God commanded him."},
+     {ref:"Hebrews 11:7", txt:"By faith Noah, when warned about things not yet seen, in holy fear built an ark to save his family."},
+     {ref:"1 Peter 3:20", txt:"In the ark a few people, eight in all, were saved through water."},
+   ],
+   lessons:["Faithfulness is not measured by visible results — Noah preached righteousness for decades with no converts outside his family.","The ark is one of the Bible's most powerful pictures of salvation: safety is found only inside, and God shuts the door.","Even Noah stumbles after salvation (Genesis 9:21). The flood didn't fix human nature — only the new birth does that.","God remembers those who are faithful even when the whole world has forgotten God."],
+   legacy:"The flood narrative appears in cultures worldwide. Peter uses it to describe baptism (1 Peter 3:20–21) — saved through water. Jesus uses it to describe the sudden arrival of the Son of Man (Matthew 24:37–39). The Noahic Covenant is the first universal covenant in Scripture — made with all humanity and all living things."},
+
+  // PATRIARCHS
+  {id:4, name:"Sarah", era:"Patriarchs", gender:"F", icon:"⭐", iconBg:"#451a03", tag:"Mother of Nations", tagColor:"#f59e0b", tagBg:"#451a03",
+   story:"Sarah leaves her homeland with Abraham on the strength of a promise she did not personally receive — and spends 25 years waiting for a child she was told she would have. She is beautiful enough that Abraham twice passes her off as his sister out of fear — placing her in dangerous situations where God has to intervene both times. When she hears the angel say she will have a son in her old age, she laughs. Who wouldn't? She is 89 years old. But Isaac is born. She names him 'laughter.' Her journey takes her from barrenness and doubt to becoming the mother of the covenant line through which every promise flows.",
+   verses:[
+     {ref:"Genesis 18:12", txt:"Sarah laughed to herself as she thought, 'After I am worn out and my lord is old, will I now have this pleasure?'"},
+     {ref:"Genesis 21:6", txt:"God has brought me laughter, and everyone who hears about this will laugh with me."},
+     {ref:"Hebrews 11:11", txt:"By faith Sarah herself received power to conceive, even when she was past the age, since she considered him faithful who had promised."},
+     {ref:"1 Peter 3:6", txt:"Sarah obeyed Abraham and called him her lord. You are her daughters if you do what is right."},
+   ],
+   lessons:["God's promises often come with long waiting periods. Sarah waited 25 years. The waiting was part of the story.","Doubt and faith are not opposites — Sarah laughed at God's promise and is listed in Hebrews 11 as a hero of faith.","Trying to help God's plan along (Hagar, Genesis 16) usually creates more pain. God's timing is not improved by our shortcuts.","Isaac's name means 'laughter.' God has a sense of humor — He turns our cynical laughter into joy."],
+   legacy:"Sarah is the mother of Isaac, grandmother of Jacob, and the ancestral mother of all Israel. Isaiah calls her the 'mother' of God's people (Isaiah 51:2). Paul uses her as the mother of the promise-child in his allegory of Galatians 4, contrasting her with Hagar as a picture of grace vs. law."},
+
+  {id:5, name:"Abraham", era:"Patriarchs", gender:"M", icon:"🌟", iconBg:"#451a03", tag:"Father of Faith", tagColor:"#f59e0b", tagBg:"#451a03",
+   story:"God calls an idol-worshipping man named Abram from Ur of the Chaldees — no backstory, no qualification mentioned — and makes him seven staggering promises: land, descendants, blessing, greatness, protection, and that all nations will be blessed through him. Abram goes. He is 75 years old with a barren wife and no heir. What follows is a 25-year journey of faith, failure, and deepening trust. He lies twice about Sarah being his wife. He takes Hagar as a second wife trying to force the promise. He laughs at God. Yet he also leaves everything on a word, circumcises every male in his household as a sign of the covenant, and on Mount Moriah raises a knife over his only son — fully prepared to obey God at the point of greatest cost.",
+   verses:[
+     {ref:"Genesis 12:1", txt:"The LORD had said to Abram, 'Go from your country, your people and your father's household to the land I will show you.'"},
+     {ref:"Genesis 15:6", txt:"Abram believed the LORD, and he credited it to him as righteousness."},
+     {ref:"Romans 4:20-21", txt:"He did not waver through unbelief regarding the promise of God, but was strengthened in his faith and gave glory to God, being fully persuaded that God had power to do what he had promised."},
+     {ref:"Hebrews 11:17", txt:"By faith Abraham, when God tested him, offered Isaac as a sacrifice. He who had embraced the promises was about to sacrifice his one and only son."},
+   ],
+   lessons:["Faith is not the absence of questions or fear — Abraham laughed, lied, and wavered, and still believed.","Obedience often requires moving before you can see clearly. Abraham went 'not knowing where he was going.'","God's covenants are unconditional — He walked through the pieces alone (Genesis 15), meaning fulfillment depends entirely on Him, not us.","The greatest test of faith often involves what we love most. God did not want Isaac — He wanted Abraham's whole heart."],
+   legacy:"Abraham is the founding father of faith for Jews, Christians, and Muslims. Paul builds his entire theology of justification by faith on Abraham's story (Romans 4, Galatians 3). The Abrahamic covenant is the backbone of all redemptive history — every blessing of the gospel flows through the promise made to this one man."},
+
+  {id:6, name:"Rebekah", era:"Patriarchs", gender:"F", icon:"🏺", iconBg:"#451a03", tag:"Woman of Initiative", tagColor:"#f59e0b", tagBg:"#451a03",
+   story:"Rebekah is introduced at a well — kind, generous, and quick to act. When Abraham's servant arrives seeking a wife for Isaac, Rebekah not only draws water for him but for all ten of his camels — an enormous act of hospitality. When asked if she will go with this stranger to marry a man she has never met, her answer is immediate: 'I will go.' She marries Isaac, prays through her painful pregnancy, and receives a direct word from God about her twin sons — that the older will serve the younger. She acts on this prophecy by helping Jacob deceive Isaac, a choice that fractures her family and costs her Jacob's presence for the rest of her life.",
+   verses:[
+     {ref:"Genesis 24:19", txt:"After she had given him a drink, she said, 'I'll draw water for your camels too, until they have had enough to drink.'"},
+     {ref:"Genesis 24:58", txt:"They called Rebekah and asked her, 'Will you go with this man?' 'I will go,' she said."},
+     {ref:"Genesis 25:23", txt:"The LORD said to her, 'Two nations are in your womb… the older will serve the younger.'"},
+     {ref:"Romans 9:12", txt:"Before the twins were born or had done anything good or bad… she was told, 'The older will serve the younger.'"},
+   ],
+   lessons:["Generous, spontaneous kindness is often the very thing that opens doors God has been preparing.","Rebekah's deception, even in pursuit of God's purpose, caused lasting damage. We cannot do evil so good may result.","God spoke to Rebekah directly (Genesis 25:23) — a reminder that God's conversations with women in Scripture are not exceptional but consistent.","Acting on God's word with our own methods rather than trusting His timing often produces the outcomes we feared."],
+   legacy:"Paul uses Rebekah's story in Romans 9 to illustrate sovereign election — God chose Jacob before either twin had done anything. Rebekah is one of the most fully drawn female characters in Genesis: brave, decisive, flawed, and loved."},
+
+  {id:7, name:"Moses", era:"Exodus", gender:"M", icon:"🔥", iconBg:"#450a0a", tag:"Deliverer & Lawgiver", tagColor:"#ef4444", tagBg:"#450a0a",
+   story:"Moses is born under a death sentence, hidden by his mother for three months, placed in a basket on the Nile, and drawn out by Pharaoh's daughter. He grows up in the palace of the man whose decree wanted him dead. He kills an Egyptian defending a Hebrew slave, flees in fear, and spends 40 years as a shepherd in the wilderness — a forgotten man. Then God appears in a burning bush and sends him back to Egypt at age 80. What follows is one of history's most dramatic confrontations: ten plagues, the Passover, the Red Sea, Mount Sinai, forty years in the wilderness. Moses speaks face to face with God 'as a man speaks with a friend.' He intercedes for Israel when God's wrath burns against them, effectively standing between the people and destruction. He dies on Mount Nebo, seeing but never entering the Promised Land — the consequence of one act of disobedience at the waters of Meribah.",
+   verses:[
+     {ref:"Exodus 3:11", txt:"But Moses said to God, 'Who am I that I should go to Pharaoh and bring the Israelites out of Egypt?'"},
+     {ref:"Numbers 12:3", txt:"Now Moses was a very humble man, more humble than anyone else on the face of the earth."},
+     {ref:"Exodus 33:11", txt:"The LORD would speak to Moses face to face, as one speaks to a friend."},
+     {ref:"Hebrews 11:27", txt:"By faith he left Egypt, not fearing the king's anger; he persevered because he saw him who is invisible."},
+   ],
+   lessons:["God often calls the most unlikely: Moses was a stuttering murderer in exile. He was not qualified — that was the point.","Intercession changes outcomes. Moses stood in the gap and God relented. One person's prayer can redirect history.","Humility is not low self-esteem — Moses was the most powerful man in Israel and the most humble person on earth simultaneously.","Even the greatest leaders can disqualify themselves from a season of blessing through one act of prideful disobedience. Finish well."],
+   legacy:"Moses is the dominant figure of the OT — prophet, lawgiver, intercessor, and deliverer. He appears with Elijah at the Transfiguration (Matthew 17). Jesus is explicitly compared to Moses as 'the prophet like me' (Acts 3:22, Deuteronomy 18:15). The Law given through Moses finds its fulfillment — not abolition — in Christ."},
+
+  {id:8, name:"Miriam", era:"Exodus", gender:"F", icon:"🥁", iconBg:"#450a0a", tag:"Prophet & Leader", tagColor:"#ef4444", tagBg:"#450a0a",
+   story:"Miriam appears first as a quick-thinking young girl watching her baby brother Moses drift down the Nile in a basket, then boldly suggesting to Pharaoh's daughter that she find a Hebrew nurse — her own mother. Decades later she emerges as a prophet and worship leader in Israel, leading the women in singing and dancing after the crossing of the Red Sea. She is explicitly called a prophetess and listed alongside Moses and Aaron as a leader of the Exodus (Micah 6:4). Her story takes a painful turn when she speaks against Moses' Cushite wife and questions his unique leadership — and is struck with leprosy. Moses intercedes for her. She is healed after seven days outside the camp.",
+   verses:[
+     {ref:"Exodus 2:7", txt:"Then his sister asked Pharaoh's daughter, 'Shall I go and get one of the Hebrew women to nurse the baby for you?'"},
+     {ref:"Exodus 15:20-21", txt:"Then Miriam the prophet, Aaron's sister, took a timbrel in her hand, and all the women followed her… Miriam sang to them: 'Sing to the LORD, for he is highly exalted.'"},
+     {ref:"Micah 6:4", txt:"I brought you up out of Egypt and redeemed you from the land of slavery. I sent Moses to lead you, also Aaron and Miriam."},
+     {ref:"Numbers 12:9-10", txt:"The anger of the LORD burned against them, and he left them. When the cloud lifted from above the tent, Miriam had leprosy."},
+   ],
+   lessons:["Leadership and gifting do not protect us from pride. Miriam had the most extraordinary credentials and still fell into comparison and jealousy.","God takes seriously the mistreatment of those He has specifically appointed — even by fellow leaders.","The whole camp waited for Miriam during her leprosy (Numbers 12:15) — a measure of how valued she was.","Miriam is proof that women held recognized leadership and prophetic roles throughout Israel's history."],
+   legacy:"Miriam is one of only five women in the OT explicitly called a prophetess. Micah lists her alongside Moses and Aaron as a leader of the Exodus — an extraordinary honor. Her song in Exodus 15 is one of the oldest pieces of Hebrew poetry in existence."},
+
+  {id:9, name:"Deborah", era:"Judges", gender:"F", icon:"🌿", iconBg:"#1a2e05", tag:"Judge & Prophet", tagColor:"#84cc16", tagBg:"#1a2e05",
+   story:"In the darkest period of Israel's history, when the nation cycles through sin and oppression, God raises up judges to deliver them. Deborah is the only judge who is also a prophet. She sits under a palm tree in the hill country of Ephraim, and all Israel comes to her for judgment. When the general Barak is commissioned to fight against the Canaanite commander Sisera, he refuses to go without Deborah. She goes — but tells him the honor of the victory will go to a woman. That woman turns out to be Jael, who drives a tent peg through Sisera's skull while he sleeps. The song Deborah and Barak sing afterward is one of the most ancient texts in the Bible.",
+   verses:[
+     {ref:"Judges 4:4", txt:"Now Deborah, a prophet, the wife of Lappidoth, was leading Israel at that time."},
+     {ref:"Judges 4:9", txt:"Certainly I will go with you, said Deborah. But because of the course you are taking, the honor will not be yours, for the LORD will deliver Sisera into the hands of a woman."},
+     {ref:"Judges 5:7", txt:"Villagers in Israel would not fight; they held back until I, Deborah, arose, until I arose, a mother in Israel."},
+     {ref:"Hebrews 11:32", txt:"And what more shall I say? I do not have time to tell about Gideon, Barak, Samson and Jephthah…"},
+   ],
+   lessons:["God raises up leaders based on availability and faithfulness, not gender or status. Deborah led because she was willing.","Barak's hesitation is not entirely cowardice — having a prophet at your side in battle is genuinely wise. But his dependence on Deborah for courage cost him the credit.","Deborah called herself 'a mother in Israel' — her authority was rooted in fierce care for her people, not personal ambition.","True leadership is often about creating the conditions for others (Barak, Jael) to succeed."],
+   legacy:"Deborah is one of the most remarkable figures in the OT — prophet, judge, military strategist, poet, and mother of Israel. Her story challenges any reading of Scripture that restricts women from leadership roles. She stands as proof that God has always used women to lead, judge, and deliver His people."},
+
+  {id:10, name:"Ruth", era:"Judges", gender:"F", icon:"🌾", iconBg:"#365314", tag:"Faithful Outsider", tagColor:"#84cc16", tagBg:"#1a2e05",
+   story:"Ruth is a Moabite — a people the Law forbade from entering the assembly of Israel for ten generations. She is also a widow, childless, and poor. When her mother-in-law Naomi decides to return to Bethlehem after the death of both their husbands, Ruth faces a choice: go home to her own people, gods, and future, or follow an old woman into uncertainty. Her declaration — 'Where you go I will go; your people shall be my people and your God my God' — is one of the most beautiful expressions of covenant loyalty in all of Scripture. In Bethlehem she works as a gleaner in the fields, covered in dust at the margins of society. Boaz, a wealthy relative, notices her. He is the only person in the whole story who sees her for who she really is.",
+   verses:[
+     {ref:"Ruth 1:16", txt:"Where you go I will go, and where you stay I will stay. Your people will be my people and your God my God."},
+     {ref:"Ruth 2:12", txt:"May the LORD repay you for what you have done. May you be richly rewarded by the LORD, the God of Israel, under whose wings you have come to take refuge."},
+     {ref:"Ruth 3:11", txt:"All the people of my town know that you are a woman of noble character."},
+     {ref:"Matthew 1:5", txt:"Boaz the father of Obed, whose mother was Ruth, Obed the father of Jesse."},
+   ],
+   lessons:["Loyalty is one of the most Christlike qualities a person can have — Ruth's hesed (covenant love) for Naomi cost her everything.","God includes the outsider. Ruth was a Moabite foreigner who became an ancestor of Jesus.","Boaz is one of the most complete pictures of Jesus in the OT — the kinsman-redeemer who notices the overlooked, speaks words of grace, and pays the price of redemption.","Character is visible even in ordinary work. Boaz noticed Ruth's faithfulness in the fields before he knew her story."],
+   legacy:"Ruth appears in the genealogy of Jesus (Matthew 1:5) — one of only five women named there. Her story is a microcosm of the gospel: an outsider with no claim to God's people, fully redeemed and welcomed in. The Hebrew word chesed — loving-kindness, covenant faithfulness — runs through the entire book and is one of the most important words in the OT."},
+
+  {id:11, name:"Hannah", era:"Judges", gender:"F", icon:"🕯️", iconBg:"#1e1b4b", tag:"Woman of Prayer", tagColor:"#a78bfa", tagBg:"#1e1b4b",
+   story:"Hannah cannot have children, and she lives in a culture where that is not just a private grief but a public shame. Her husband's other wife, Peninnah, provokes her year after year until she weeps and cannot eat. At the tabernacle she prays with such intensity that Eli the priest thinks she is drunk. She makes a vow: if God gives her a son, she will give him back to God. God remembers Hannah. She conceives and gives birth to Samuel. When he is weaned — perhaps at three years old — she brings him to Eli and leaves him there. Her prayer of thanksgiving (1 Samuel 2) is so extraordinary that Mary echoes it nearly word for word in the Magnificat.",
+   verses:[
+     {ref:"1 Samuel 1:10", txt:"In her deep anguish Hannah prayed to the LORD, weeping bitterly."},
+     {ref:"1 Samuel 1:27-28", txt:"I prayed for this child, and the LORD has granted me what I asked of him. So now I give him to the LORD."},
+     {ref:"1 Samuel 2:1-2", txt:"My heart rejoices in the LORD; in the LORD my horn is lifted high… There is no one holy like the LORD."},
+     {ref:"Luke 1:46-47", txt:"My soul glorifies the Lord and my spirit rejoices in God my Savior — echoing Hannah's song across the centuries."},
+   ],
+   lessons:["God hears desperate, wordless prayer — Hannah's lips moved but no sound came out, and God answered.","Surrendering what you prayed hardest for is one of the most profound acts of faith possible.","Hannah's pain was real, acknowledged, and not fixed quickly. God honored the full weight of her grief.","Worship in the darkest seasons is not denial — it is defiance against despair. Hannah's song came from a place of real suffering."],
+   legacy:"Hannah's prayer in 1 Samuel 2 is the direct model for Mary's Magnificat in Luke 1 — the parallels are unmistakable. Her willingness to give Samuel back to God shapes one of the most important figures in Israel's history, the prophet who would anoint both Saul and David."},
+
+  {id:12, name:"David", era:"Kingdom", gender:"M", icon:"👑", iconBg:"#1e1b4b", tag:"Man After God's Heart", tagColor:"#6366f1", tagBg:"#1e1b4b",
+   story:"David is the youngest of eight sons, left watching sheep while his brothers are evaluated for kingship. God tells Samuel to anoint him: 'People look at the outward appearance, but the LORD looks at the heart.' As a teenager he kills the giant Goliath with a sling and five smooth stones. He serves Saul faithfully despite being hunted like a fugitive. He becomes Israel's greatest king — expanding the borders, bringing the Ark to Jerusalem, and writing half the Psalms. He is also a man of devastating failure: he commits adultery with Bathsheba, arranges her husband Uriah's murder, and tries to cover it up. The prophet Nathan confronts him. And David breaks — Psalm 51, his confession, is one of the most raw and honest prayers in human history.",
+   verses:[
+     {ref:"1 Samuel 13:14", txt:"The LORD has sought out a man after his own heart."},
+     {ref:"Psalm 51:10", txt:"Create in me a pure heart, O God, and renew a steadfast spirit within me."},
+     {ref:"2 Samuel 7:16", txt:"Your house and your kingdom will endure forever before me; your throne will be established forever."},
+     {ref:"Acts 13:22", txt:"I have found David son of Jesse, a man after my own heart; he will do everything I want him to do."},
+   ],
+   lessons:["'After God's heart' doesn't mean sinless — it means always running back to God, even after the worst failures.","David's transparency in the Psalms gives us permission to be radically honest with God about fear, doubt, grief, anger, and guilt.","Sin always has consequences even after forgiveness — David was forgiven but the sword never departed from his house.","Genuine repentance is not just feeling bad — it is taking full responsibility without excuse, as David does in Psalm 51."],
+   legacy:"The Davidic Covenant — that a descendant of David will reign forever — is the blueprint for the Messiah. Every time the NT calls Jesus 'Son of David,' it is pointing back here. More OT psalms and prophecies point toward David's line than any other thread in Scripture."},
+
+  {id:13, name:"Esther", era:"Exile", gender:"F", icon:"👸", iconBg:"#4a044e", tag:"Courageous Queen", tagColor:"#d946ef", tagBg:"#2e1065",
+   story:"Esther is a Jewish orphan raised by her cousin Mordecai in the Persian exile. She is taken into the harem of King Ahasuerus (Xerxes) and eventually chosen as queen. When the king's advisor Haman plots to exterminate all Jews in the empire, Mordecai urges Esther to intervene — knowing she is the only one with any access to the king. Approaching the king unsummoned means death unless he extends his scepter. Esther fasts three days, gathers courage, and goes in. 'If I perish, I perish.' The plan works. Haman is hanged. The Jews are saved. God is never mentioned in the book of Esther — but His fingerprints are on every page.",
+   verses:[
+     {ref:"Esther 4:14", txt:"Who knows whether you have not come to the kingdom for such a time as this?"},
+     {ref:"Esther 4:16", txt:"I will go to the king, though it is against the law, and if I perish, I perish."},
+     {ref:"Esther 8:17", txt:"And many people of other nationalities became Jews because fear of the Jews had seized them."},
+     {ref:"Esther 9:22", txt:"As the time when the Jews got relief from their enemies, and as the month when their sorrow was turned into joy."},
+   ],
+   lessons:["God often places people in specific positions for purposes they don't yet understand. Influence is stewardship.","Courage is not the absence of fear — Esther fasted and trembled before she acted. She acted anyway.","The absence of God's name in Esther does not mean God is absent. He is the hidden actor on every page.","Doing nothing in a crisis when you have the power to act is itself a choice with consequences."],
+   legacy:"Esther is the basis for the Jewish feast of Purim, still celebrated today. Her story is one of the Bible's clearest pictures of providential protection — God preserving His people through the courage of an ordinary woman placed in an extraordinary position. 'For such a time as this' is one of the most quoted lines in all of Scripture."},
+
+  {id:14, name:"Elijah", era:"Kingdom", gender:"M", icon:"⚡", iconBg:"#3b0764", tag:"Prophet of Fire", tagColor:"#a855f7", tagBg:"#3b0764",
+   story:"Elijah appears without introduction in 1 Kings 17 — no genealogy, no origin story — and immediately announces a three-year drought to the wicked king Ahab. He is fed by ravens. He raises a widow's son from the dead. Then comes Mount Carmel: 450 prophets of Baal vs. one man. He mocks them, prays once, and fire falls from heaven and consumes a water-soaked sacrifice. The people fall on their faces: 'The LORD, He is God.' Elijah slaughters the prophets. Then, in one of Scripture's most startling reversals, he runs into the desert in suicidal despair, collapses under a broom tree, and asks God to take his life. God's response is not a rebuke but a meal, rest, and a still small voice.",
+   verses:[
+     {ref:"1 Kings 18:21", txt:"How long will you waver between two opinions? If the LORD is God, follow him; but if Baal is God, follow him."},
+     {ref:"1 Kings 19:4", txt:"I have had enough, LORD. Take my life; I am no better than my ancestors."},
+     {ref:"1 Kings 19:12", txt:"After the fire came a gentle whisper."},
+     {ref:"James 5:17", txt:"Elijah was a human being, even as we are. He prayed earnestly that it would not rain, and it did not rain on the land for three and a half years."},
+   ],
+   lessons:["The greatest spiritual victories can be immediately followed by the deepest personal crashes. Elijah's depression after Carmel is not weakness — it is human.","God ministers to the body before the soul. He fed Elijah and let him sleep before saying a word. This is pastoral wisdom.","The still small voice: God's most important communications are often the quietest. Spectacular experiences are not the norm of the spiritual life.","James holds Elijah up as the model of powerful prayer precisely because he was ordinary — just like us."],
+   legacy:"Elijah is one of only two people in the OT taken to heaven without dying (2 Kings 2:11). Malachi promises he will return before the great day of the LORD (Malachi 4:5). Jesus explicitly says John the Baptist fulfilled this role. Elijah appears with Moses at the Transfiguration, representing the Prophets and the Law standing before their fulfillment."},
+
+  {id:15, name:"Daniel", era:"Exile", gender:"M", icon:"🦁", iconBg:"#1c1917", tag:"Faithful in Exile", tagColor:"#f97316", tagBg:"#1c1917",
+   story:"Daniel is taken from Jerusalem as a teenager — probably 14 or 15 years old — and placed in the most elite training program of the Babylonian empire. From day one he resolves not to compromise. He refuses the king's food. He interprets dreams when no one else can. He refuses to stop praying when it is literally illegal and is thrown into a den of lions. Through six decades of service under four kings across two empires, Daniel never once compromises his faith. He also receives the most detailed and far-reaching prophetic visions in the entire OT — kingdoms rising and falling, the coming of the Son of Man, the weeks of years pointing toward the Messiah.",
+   verses:[
+     {ref:"Daniel 1:8", txt:"But Daniel resolved not to defile himself with the royal food and wine, and he asked the chief official for permission not to defile himself this way."},
+     {ref:"Daniel 6:10", txt:"Three times a day he got down on his knees and prayed, giving thanks to his God, just as he had done before."},
+     {ref:"Daniel 7:13-14", txt:"There before me was one like a son of man, coming with the clouds of heaven… He was given authority, glory and sovereign power."},
+     {ref:"Daniel 9:3", txt:"So I turned to the Lord God and pleaded with him in prayer and petition, in fasting, and in sackcloth and ashes."},
+   ],
+   lessons:["Integrity begins with small, invisible decisions — Daniel's faithfulness in food and prayer preceded his public courage in the lions' den.","You can thrive in a hostile culture without becoming it. Daniel was useful to the most powerful empires in the world and never once compromised.","Prayer is not a crisis response — Daniel prayed three times a day for decades before the lions' den. His courage under pressure was built in ordinary days.","God honors those who honor Him, often in public ways that make His name known to people of power who would otherwise never hear it."],
+   legacy:"Jesus quoted Daniel more than any other OT prophet. The title 'Son of Man' — Jesus' most common self-designation — comes directly from Daniel 7:13. Daniel's seventy weeks (Daniel 9:24–27) has been interpreted as a precise timeline pointing to the coming of the Messiah and continues to be one of the most studied passages in biblical prophecy."},
+
+  {id:16, name:"Mary Magdalene", era:"New Testament", gender:"F", icon:"🌹", iconBg:"#500724", tag:"First Witness", tagColor:"#f472b6", tagBg:"#500724",
+   story:"Mary Magdalene is one of the most misrepresented people in the Bible — she is never identified as a prostitute in Scripture, a tradition that arose centuries later with no textual basis. What Scripture does say is that Jesus cast seven demons out of her. From that moment she becomes one of the most devoted followers in the Gospels. She finances Jesus' ministry. She is at the cross when most of the disciples have fled. She is the first at the tomb on Sunday morning. She is the first person the risen Jesus speaks to — and He reveals Himself by simply calling her name: 'Mary.' She becomes the first person to announce the resurrection.",
+   verses:[
+     {ref:"Luke 8:2", txt:"Mary (called Magdalene) from whom seven demons had come out… were helping to support them out of their own means."},
+     {ref:"John 19:25", txt:"Near the cross of Jesus stood his mother, his mother's sister, Mary the wife of Clopas, and Mary Magdalene."},
+     {ref:"John 20:16", txt:"Jesus said to her, 'Mary.' She turned toward him and cried out in Aramaic, 'Rabboni!' (which means Teacher)."},
+     {ref:"John 20:18", txt:"Mary Magdalene went to the disciples with the news: 'I have seen the Lord!'"},
+   ],
+   lessons:["Jesus restores completely — Mary went from seven demons to first witness of the resurrection. There is no past too dark for total restoration.","Presence in suffering is love. Mary was at the cross when it cost something to be there.","Jesus chose a woman as the first witness to the resurrection in a culture that did not accept women's testimony in court. This was deliberate.","The ones who have been forgiven much often love much — Mary's devotion makes sense in light of what she had been freed from."],
+   legacy:"Mary Magdalene is called 'Apostle to the Apostles' in early church tradition — the one who brought the first resurrection announcement to the Twelve. Her presence at both the crucifixion and the empty tomb makes her one of the most important eyewitnesses in the NT. The false identification of her as a prostitute (popularized by Pope Gregory I in 591 AD) has been officially corrected by the Catholic Church and has no scriptural basis."},
+
+  {id:17, name:"Mary, Mother of Jesus", era:"New Testament", gender:"F", icon:"🕊️", iconBg:"#500724", tag:"Favored & Faithful", tagColor:"#f472b6", tagBg:"#500724",
+   story:"A teenage girl in an obscure Galilean village is visited by the angel Gabriel and told she will conceive the Son of God by the Holy Spirit. The social cost alone is staggering: pregnancy before marriage in her culture meant shame, rejection, and potential death by stoning. Her response — 'I am the Lord's servant; may it be to me as you have said' — is one of the most courageous acts of surrender in all of Scripture. She then breaks into the Magnificat, a theologically rich prayer that draws on Hannah, the Psalms, and the Prophets. She raises Jesus knowing who He is, loses Him in Jerusalem at twelve, watches Him begin His ministry at a wedding by her prompting, follows Him through controversy and misunderstanding, and stands at the foot of the cross. She is in the upper room at Pentecost.",
+   verses:[
+     {ref:"Luke 1:38", txt:"'I am the Lord's servant,' Mary answered. 'May your word to me be fulfilled.'"},
+     {ref:"Luke 1:46-48", txt:"My soul glorifies the Lord and my spirit rejoices in God my Savior, for he has been mindful of the humble state of his servant."},
+     {ref:"John 2:5", txt:"His mother said to the servants, 'Do whatever he tells you.'"},
+     {ref:"John 19:25-26", txt:"Near the cross of Jesus stood his mother… When Jesus saw his mother there, and the disciple whom he loved standing nearby, he said to her, 'Woman, here is your son.'"},
+   ],
+   lessons:["Saying yes to God's call often means accepting a plan that will cost you more than you can currently imagine.","The Magnificat shows Mary was deeply saturated in Scripture — her prayer is woven from dozens of OT texts. She was not passive.","'Do whatever he tells you' (John 2:5) is Mary's last recorded speech. It is the perfect summary of her entire life — and the best counsel any person could give.","Mary stood at the cross. Faithful love stays even at the point of greatest pain."],
+   legacy:"Mary's yes made the incarnation possible in human terms. Early theologians paired her with Eve: where Eve's disobedience brought death, Mary's obedience brought life. Her Magnificat (Luke 1:46–55) is sung in churches worldwide daily. She is the most mentioned woman in the Quran and the most venerated woman in Christian history."},
+
+  {id:18, name:"Peter", era:"New Testament", gender:"M", icon:"⚓", iconBg:"#0c4a6e", tag:"Rock & Restorer", tagColor:"#38bdf8", tagBg:"#0c2a3e",
+   story:"Simon is a fisherman — impulsive, loud, passionate, and wildly unreliable. Jesus renames him Peter (Rock) the moment they meet, long before he has done anything rock-like. He walks on water and sinks. He confesses Jesus as the Messiah in one breath and rebukes Him in the next. He promises he will never deny Jesus — and denies Him three times before dawn, by a charcoal fire, within earshot of Jesus' gaze. After the resurrection, Jesus meets him by another charcoal fire and restores him three times, matching each restoration to each denial. 'Simon, do you love me?' Three times. Then: 'Feed my sheep.' Peter preaches at Pentecost and 3,000 people are saved. He opens the gospel to the Gentiles. He writes two NT letters. Church tradition holds he was crucified upside down — refusing to die the same way as Jesus.",
+   verses:[
+     {ref:"Matthew 16:16", txt:"Simon Peter answered, 'You are the Messiah, the Son of the living God.'"},
+     {ref:"Luke 22:61-62", txt:"The Lord turned and looked straight at Peter. And he went outside and wept bitterly."},
+     {ref:"John 21:17", txt:"The third time he said to him, 'Simon, do you love me?' Peter was hurt… 'Lord, you know all things; you know that I love you.' Jesus said, 'Feed my sheep.'"},
+     {ref:"Acts 2:41", txt:"Those who accepted his message were baptized, and about three thousand were added to their number that day."},
+   ],
+   lessons:["Jesus names us for who we will become, not who we currently are. 'Peter' was a promise, not a description.","The most detailed failure (the three denials) is met with the most detailed restoration (the three questions). God is thorough in His grace.","Peter's greatest sermon came weeks after his greatest failure. God does not disqualify those who fall and return.","The charcoal fire detail (John 18:18, John 21:9) is not accidental — John is drawing a direct parallel. Restoration happened at the same kind of fire where the denial happened."],
+   legacy:"Peter became the leading voice of the early church, the first to preach the gospel publicly, and the first to bring it to the Gentiles. His two letters address suffering, hope, and holiness. His story is perhaps the most powerful demonstration in the NT that failure is never the final word for those who return to Jesus."},
+
+  {id:19, name:"Paul", era:"New Testament", gender:"M", icon:"✍️", iconBg:"#1c1035", tag:"Apostle to the Gentiles", tagColor:"#7c3aed", tagBg:"#1c1035",
+   story:"Saul of Tarsus is the most dangerous enemy of the early church — a Roman citizen, a Pharisee trained under Gamaliel, deeply intelligent, theologically formidable, and personally committed to hunting Christians to their death. He holds the coats at Stephen's stoning. He drags men and women to prison. Then Jesus appears to him on the road to Damascus in blinding light and speaks directly to him. Everything stops. He is blind for three days. When sight returns, he is a different man. He spends three years in Arabia being formed. Then three missionary journeys across the known world, planting churches in city after city. He is beaten with rods, stoned and left for dead, shipwrecked three times, imprisoned repeatedly, and eventually beheaded under Nero — writing his final letters from a cold Roman cell with extraordinary peace.",
+   verses:[
+     {ref:"Acts 9:4-5", txt:"'Saul, Saul, why do you persecute me?' 'Who are you, Lord?' Saul asked. 'I am Jesus, whom you are persecuting,' he replied."},
+     {ref:"Galatians 2:20", txt:"I have been crucified with Christ and I no longer live, but Christ lives in me."},
+     {ref:"Philippians 4:11", txt:"I have learned, in whatever state I am, to be content."},
+     {ref:"2 Timothy 4:7", txt:"I have fought the good fight, I have finished the race, I have kept the faith."},
+   ],
+   lessons:["The gospel can reach anyone. If it reached Paul — the church's greatest enemy — it can reach the person you've given up on.","Paul's three years in Arabia after his conversion show the importance of formation before ministry. Speed is not the same as depth.","'Contentment is learned' (Philippians 4:11) — it is a discipline acquired through practice in every circumstance, not a gift given to some.","Paul finished well. His last letters, written in chains, are some of the most joyful in the NT. The goal is not just to start — it is to finish."],
+   legacy:"Paul wrote 13 NT letters — the theological backbone of Christianity. Romans alone changed the course of Western history through Augustine, Luther, Wesley, and Barth. His conversion is one of the strongest historical arguments for the resurrection — the church's greatest persecutor became its greatest missionary because of a direct encounter with the risen Jesus that he had everything to lose by believing."},
+
+  {id:20, name:"Lydia", era:"New Testament", gender:"F", icon:"🟣", iconBg:"#3b0764", tag:"First European Convert", tagColor:"#a855f7", tagBg:"#3b0764",
+   story:"Lydia appears briefly in Acts 16 — but her brief appearance carries enormous weight. She is a successful businesswoman from Thyatira, a dealer in purple cloth (a luxury trade connected to wealth and status), living in Philippi. On the Sabbath, Paul finds a group of women gathered by the river for prayer — no synagogue, just women praying by the water. He sits and speaks to them. God opens Lydia's heart. She and her household are baptized. She immediately invites Paul and his team to stay at her home, and the church at Philippi — one of the most beloved in the NT — is born in her house.",
+   verses:[
+     {ref:"Acts 16:14", txt:"One of those listening was a woman from the city of Thyatira named Lydia, a dealer in purple cloth. She was a worshiper of God. The Lord opened her heart to respond to Paul's message."},
+     {ref:"Acts 16:15", txt:"When she and the members of her household were baptized, she invited us to her home. 'If you consider me a believer in the Lord,' she said, 'come and stay at my house.' And she persuaded us."},
+     {ref:"Philippians 4:15", txt:"Moreover, as you Philippians know, in the early days of your acquaintance with the gospel… not one church shared with me in the matter of giving and receiving, except you only."},
+   ],
+   lessons:["The Philippian church — one of Paul's most generous, most joyful congregations — started with one woman by a river. Never underestimate a small beginning.","Lydia's faith was immediate and expressed in hospitality. True conversion shows up in how we use our homes and resources.","God opens hearts — Lydia's response was real, but Scripture is clear: it was God who opened her to receive the message.","Women of means and initiative were key players in the spread of the early church. Lydia funded and housed the Philippian mission."],
+   legacy:"Lydia is the first recorded European convert to Christianity. The church she hosted in her home became the Philippian church — the church Paul called his joy and crown (Philippians 4:1), the most personally warm of all his letters. Every time Philippians is read, Lydia's home is in the background."},
+];
+
+var ERAS = ["All","Creation","Patriarchs","Exodus","Judges","Kingdom","Exile","New Testament"];
+var activeEra = "All";
+var openId = null;
+
+function renderFilter(){
+  document.getElementById('filterRow').innerHTML = ERAS.map(function(e){
+    return '<button class="filter-btn'+(e===activeEra?' active':'')+'" onclick="setEra(\''+e.replace(/'/g,"\\'")+'\')">' + e + '</button>';
+  }).join('');
+}
+
+function setEra(era){ activeEra=era; openId=null; renderFilter(); renderChars(); }
+
+function renderChars(){
+  var q = document.getElementById('searchInput').value.toLowerCase();
+  var list = CHARS.filter(function(c){
+    var matchEra = activeEra==='All' || c.era===activeEra;
+    var matchQ = !q || c.name.toLowerCase().includes(q) || c.tag.toLowerCase().includes(q) || c.story.toLowerCase().includes(q);
+    return matchEra && matchQ;
+  });
+  if(!list.length){ document.getElementById('charGrid').innerHTML='<div class="empty-state">No characters found.</div>'; return; }
+  document.getElementById('charGrid').innerHTML = list.map(function(c){
+    var isOpen = openId===c.id;
+    var genderLabel = c.gender==='F' ? '<span class="gender-badge" style="background:#50072488;color:#f472b6;">♀</span>' : '';
+    return '<div class="char-card" id="card-'+c.id+'">'
+      +'<div class="char-header" onclick="toggleChar('+c.id+')">'
+      +'<div class="char-avatar" style="background:'+c.iconBg+'">'+c.icon+'</div>'
+      +'<div class="char-info">'
+      +'<div class="char-name">'+c.name+genderLabel+'</div>'
+      +'<div class="char-meta">'+c.era+'</div>'
+      +'<span class="char-tag" style="color:'+c.tagColor+';background:'+c.tagBg+'">'+c.tag+'</span>'
+      +'</div>'
+      +'<div class="char-arrow" id="arr-'+c.id+'">'+(isOpen?'▲':'▼')+'</div>'
+      +'</div>'
+      +'<div class="char-body'+(isOpen?' open':'')+'" id="body-'+c.id+'">'
+      +'<div class="section-label">Their Story</div>'
+      +'<div class="section-text">'+c.story+'</div>'
+      +'<div class="section-label">Key Verses</div>'
+      +'<div class="key-verses">'+c.verses.map(function(v){ return '<div class="verse-item"><div class="verse-ref">'+v.ref+'</div><div class="verse-txt">'+v.txt+'</div></div>'; }).join('')+'</div>'
+      +'<div class="section-label">Lessons for Today</div>'
+      +'<div class="lessons-list">'+c.lessons.map(function(l){ return '<div class="lesson-item">'+l+'</div>'; }).join('')+'</div>'
+      +'<div class="section-label">Legacy &amp; Significance</div>'
+      +'<div class="legacy-box"><div class="section-text" style="margin-bottom:0">'+c.legacy+'</div></div>'
+      +'</div>'
+      +'</div>';
+  }).join('');
+}
+
+function toggleChar(id){
+  openId = openId===id ? null : id;
+  renderChars();
+  if(openId){ setTimeout(function(){ var el=document.getElementById('card-'+id); if(el) el.scrollIntoView({behavior:'smooth',block:'nearest'}); },50); }
+}
+
+renderFilter(); renderChars();
+</script>
+</body>
+</html>
